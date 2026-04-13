@@ -96,7 +96,7 @@
 			};
 		};
 
-		speaker_playback_dai {
+		speaker-playback-dai-link {
 			link-name = "Primary Spkr Playback";
 			cpu {
 				sound-dai = <&q6afedai PRIMARY_MI2S_RX>;
@@ -110,7 +110,82 @@
 				sound-dai = <&tfa9874>;
 			};
 		};
+
+		va-dai-link {
+			link-name = "VA Capture";
+			cpu {
+				sound-dai = <&q6afedai VA_CODEC_DMA_TX_0>;
+			};
+
+			platform {
+				sound-dai = <&q6routing>;
+			};
+
+			codec {
+				sound-dai = <&vamacro 0>;
+			};
+		};
+
+		// wcd-playback-dai-link {
+		// 	link-name = "WCD Playback";
+		// 	cpu {
+		// 		sound-dai = <&q6afedai RX_CODEC_DMA_RX_0>;
+		// 	};
+		// 	codec {
+		// 		sound-dai = <&wcd9375 0>, <&swr1 0>, <&rxmacro 0>;
+		// 	};
+		// 	platform {
+		// 		sound-dai = <&q6routing>;
+		// 	};
+		// };
+
+		// headphone-playback-dai-link {
+		// 	link-name = "Headphone Playback";
+		// 	cpu {
+		// 		sound-dai = <&q6afedai SECONDARY_MI2S_RX>;
+		// 	};
+
+		// 	platform {
+		// 		sound-dai = <&q6routing>;
+		// 	};
+
+		// 	codec {
+		// 		sound-dai = <&wcd9370>;
+		// 	};
+		// };
+
 	};
+
+	wcd9375: audio-codec-0 {
+		compatible = "qcom,wcd9370-codec";
+
+		pinctrl-0 = <&wcd9375_reset_active>;
+		pinctrl-names = "default";
+
+		reset-gpios = <&lpass_tlmm 6 GPIO_ACTIVE_LOW>;
+
+		vdd-buck-supply = <&vreg_l15a_1p8>;
+		vdd-rxtx-supply = <&vreg_l10a_1p8>;
+		vdd-px-supply = <&vreg_l10a_1p8>;
+		vdd-mic-bias-supply = <&vreg_bob>;
+
+		qcom,micbias1-microvolt = <1800000>;
+		qcom,micbias2-microvolt = <1800000>;
+		qcom,micbias3-microvolt = <1800000>;
+		qcom,micbias4-microvolt = <1800000>;
+		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000
+							  500000 500000>;
+		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
+		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
+		qcom,rx-device = <&wcd_rx>;
+		// qcom,tx-device = <&wcd_tx>;
+
+		#sound-dai-cells = <1>;
+		status = "disabled";
+	};
+
+
+
 
 	camt_avdd_2p8: regulator-camt-avdd-2p8 {
 		compatible = "regulator-fixed";
