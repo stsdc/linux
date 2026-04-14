@@ -132,25 +132,10 @@
 		// 		sound-dai = <&q6afedai RX_CODEC_DMA_RX_0>;
 		// 	};
 		// 	codec {
-		// 		sound-dai = <&wcd9375 0>, <&swr1 0>, <&rxmacro 0>;
+		// 		sound-dai = <&wcd9375 0>, <&swr3 0>, <&rxmacro 0>;
 		// 	};
 		// 	platform {
 		// 		sound-dai = <&q6routing>;
-		// 	};
-		// };
-
-		// headphone-playback-dai-link {
-		// 	link-name = "Headphone Playback";
-		// 	cpu {
-		// 		sound-dai = <&q6afedai SECONDARY_MI2S_RX>;
-		// 	};
-
-		// 	platform {
-		// 		sound-dai = <&q6routing>;
-		// 	};
-
-		// 	codec {
-		// 		sound-dai = <&wcd9370>;
 		// 	};
 		// };
 
@@ -178,10 +163,10 @@
 		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
 		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
 		qcom,rx-device = <&wcd_rx>;
-		// qcom,tx-device = <&wcd_tx>;
+		qcom,tx-device = <&wcd_tx>;
 
 		#sound-dai-cells = <1>;
-		status = "disabled";
+		status = "okay";
 	};
 
 
