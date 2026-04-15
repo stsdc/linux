@@ -4656,14 +4656,14 @@
 			};
 
 			wcd9375_reset_active: wcd9375-reset-active-state {
-				pins = "gpio6";
+				pins = "gpio6"; //should be gpio24
 				function = "gpio";
 				drive-strength = <16>;
 				output-high;
 			};
 
 			wcd9375_reset_sleep: wcd9375-reset-sleep-state {
-				pins = "gpio6";
+				pins = "gpio6"; //should be gpio24
 				function = "gpio";
 				drive-strength = <16>;
 				bias-disable;
@@ -4745,8 +4745,8 @@
 				clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
 				clock-names = "mclk";
 
-				qcom,dmic-sample-rate = <0x249f00>; // insisted by controller
-				vdd-micb-supply = <&vreg_l15a_1p8>; // insisted by controller
+				qcom,dmic-sample-rate = <2400000>; // insisted by the controller
+				vdd-micb-supply = <&vreg_l15a_1p8>; // insisted by the controller
 
 				#clock-cells = <0>;
 				clock-output-names = "fsgen";
@@ -4770,7 +4770,7 @@
 
 			clock-names = "mclk", "npl", "fsgen";
 
-			qcom,dmic-sample-rate = <0x249f00>;
+			qcom,dmic-sample-rate = <2400000>;
 
 			#clock-cells = <0>;
 			clock-output-names = "mclk";
@@ -4780,7 +4780,7 @@
 		swr3: soundwire@0x62ef0000 {
 			reg = <0 0x62ef0000 0 0x2000>;
 			compatible = "qcom,soundwire-v1.3.0";
-			status = "okay";
+			status = "disabled";
 			interrupts = <GIC_SPI 297 IRQ_TYPE_LEVEL_HIGH>;
 			clocks = <&rxmacro>;
 			clock-names = "iface";
@@ -4802,12 +4802,6 @@
 			#sound-dai-cells = <1>;
 			#address-cells = <2>;
 			#size-cells = <0>;
-
-			wcd_rx: wcd9375-rx@0,4 {
-				compatible = "sdw20217010a00";
-				reg = <0 4>;
-				qcom,tx-port-mapping = <1 2 3 4>;
-			};
 		};
 
 		txmacro: codec@62ec0000 {
@@ -4861,12 +4855,6 @@
 				#sound-dai-cells = <1>;
 				#address-cells = <2>;
 				#size-cells = <0>;
-
-			wcd_tx: wcd9375-tx@0,3 {
-				compatible = "sdw20217010a00";
-				reg = <0 3>;
-				qcom,tx-port-mapping = <2 3 4 5>;
-			};
 		};
 	};
 

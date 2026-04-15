@@ -147,7 +147,7 @@
 		pinctrl-0 = <&wcd9375_reset_active>;
 		pinctrl-names = "default";
 
-		reset-gpios = <&lpass_tlmm 6 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&lpass_tlmm 6 GPIO_ACTIVE_LOW>; //should be 24
 
 		vdd-buck-supply = <&vreg_l15a_1p8>;
 		vdd-rxtx-supply = <&vreg_l10a_1p8>;
@@ -168,9 +168,6 @@
 		#sound-dai-cells = <1>;
 		status = "okay";
 	};
-
-
-
 
 	camt_avdd_2p8: regulator-camt-avdd-2p8 {
 		compatible = "regulator-fixed";
@@ -216,6 +213,26 @@
 
 		pinctrl-names = "default";
 		pinctrl-0 = <&pwm_out_gpio10_default &motor_gpio_default &motor_gpio_fault>;
+	};
+};
+
+&swr2 {
+	status = "disabled"; // disabled becaus of bus clsh
+
+	wcd_tx: wcd9375-tx@0,3 {
+		compatible = "sdw20217010a00";
+		reg = <0 3>;
+		qcom,tx-port-mapping = <2 3 4 5>;
+	};
+};
+
+&swr3 {
+	status = "okay";
+
+	wcd_rx: wcd9375-rx@0,4 {
+		compatible = "sdw20217010a00";
+		reg = <0 4>;
+		qcom,tx-port-mapping = <1 2 3 4>;
 	};
 };
 
