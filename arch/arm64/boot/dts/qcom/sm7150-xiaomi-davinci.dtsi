@@ -126,28 +126,29 @@
 			};
 		};
 
-		// wcd-playback-dai-link {
-		// 	link-name = "WCD Playback";
-		// 	cpu {
-		// 		sound-dai = <&q6afedai RX_CODEC_DMA_RX_0>;
-		// 	};
-		// 	codec {
-		// 		sound-dai = <&wcd9375 0>, <&swr3 0>, <&rxmacro 0>;
-		// 	};
-		// 	platform {
-		// 		sound-dai = <&q6routing>;
-		// 	};
-		// };
+		wcd-playback-dai-link {
+			link-name = "WCD Playback";
+			cpu {
+				sound-dai = <&q6afedai RX_CODEC_DMA_RX_0>;
+			};
+			codec {
+				sound-dai = <&wcd9375 0>, <&swr3 0>, <&rxmacro 0>;
+			};
 
+			platform {
+				sound-dai = <&q6routing>;
+			};
+		};
 	};
 
 	wcd9375: audio-codec-0 {
 		compatible = "qcom,wcd9370-codec";
 
+		pinctrl-names = "active", "sleep";
 		pinctrl-0 = <&wcd9375_reset_active>;
-		pinctrl-names = "default";
+		pinctrl-1 = <&wcd9375_reset_sleep>;
 
-		reset-gpios = <&lpass_tlmm 6 GPIO_ACTIVE_LOW>; //should be 24
+		reset-gpios = <&lpass_tlmm 6 GPIO_ACTIVE_LOW>;
 
 		vdd-buck-supply = <&vreg_l15a_1p8>;
 		vdd-rxtx-supply = <&vreg_l10a_1p8>;
@@ -157,7 +158,8 @@
 		qcom,micbias1-microvolt = <1800000>;
 		qcom,micbias2-microvolt = <1800000>;
 		qcom,micbias3-microvolt = <1800000>;
-		qcom,micbias4-microvolt = <1800000>;
+		// qcom,micbias4-microvolt = <1800000>;
+
 		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000
 							  500000 500000>;
 		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
@@ -217,12 +219,12 @@
 };
 
 &swr2 {
-	status = "disabled"; // disabled becaus of bus clsh
+	status = "okay";
 
 	wcd_tx: wcd9375-tx@0,3 {
 		compatible = "sdw20217010a00";
 		reg = <0 3>;
-		qcom,tx-port-mapping = <2 3 4 5>;
+		qcom,tx-port-mapping = <1 2 3 4 5>;
 	};
 };
 
