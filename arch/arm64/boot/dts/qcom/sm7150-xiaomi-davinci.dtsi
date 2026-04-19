@@ -234,7 +234,7 @@
 	wcd_rx: wcd9375-rx@0,4 {
 		compatible = "sdw20217010a00";
 		reg = <0 4>;
-		qcom,tx-port-mapping = <1 2 3 4>;
+		qcom,rx-port-mapping = <1 2 3 4 5>;
 	};
 };
 
