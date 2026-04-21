@@ -2515,6 +2515,38 @@
 				pins = "gpio58";
 				function = "qua_mi2s";
 			};
+
+			wsa_swr_active: wsa-swr-active-state {
+				clk-pins {
+					pins = "gpio49";
+					function = "wsa_clk";
+					drive-strength = <2>;
+					bias-disable;
+				};
+
+				data-pins {
+					pins = "gpio50";
+					function = "wsa_data";
+					drive-strength = <4>;
+					bias-bus-hold;
+				};
+			};
+
+			wsa_swr_sleep: wsa-swr-sleep-state {
+				clk-pins {
+					pins = "gpio49";
+					function = "wsa_clk";
+					drive-strength = <2>;
+					bias-disable;
+				};
+
+				data-pins {
+					pins = "gpio50";
+					function = "wsa_data";
+					drive-strength = <4>;
+					bias-bus-hold;
+				};
+			};
 		};
 
 		remoteproc_adsp: remoteproc@62400000 {
@@ -4738,12 +4770,70 @@
 			};
 		};
 
+		wsamacro: codec@62f00000 {
+			compatible = "qcom,sm8250-lpass-wsa-macro";
+			reg = <0 0x62f00000 0 0x1000>;
+			clocks = <&q6afecc LPASS_CLK_ID_WSA_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+				 <&q6afecc LPASS_CLK_ID_WSA_CORE_NPL_MCLK  LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+				 <&dummy_vamacro_clk>,
+				 <&dummy_vamacro_clk>,
+				 <&vamacro>;
+
+			clock-names = "mclk", "npl", "macro", "dcodec", "fsgen";
+
+			#clock-cells = <0>;
+			clock-output-names = "mclk";
+			#sound-dai-cells = <1>;
+
+			status = "disabled";
+		};
+
+		swr0: soundwire@62f10000 {
+			reg = <0 0x62f10000 0 0x2000>;
+			compatible = "qcom,soundwire-v1.7.0";
+			interrupts = <GIC_SPI 295 IRQ_TYPE_LEVEL_HIGH>;
+
+			clocks = <&wsamacro>;
+			clock-names = "iface";
+			label = "WSA";
+
+			pinctrl-names = "default", "sleep";
+			pinctrl-0 = <&wsa_swr_active>;
+			pinctrl-1 = <&wsa_swr_sleep>;
+
+			qcom,din-ports = <3>;
+			qcom,dout-ports = <6>;
+
+			qcom,ports-sinterval  =			/bits/ 16 <0x07 0x1f 0x3f 0x07 0x1f 0x3f 0x0f 0x0f 0xff>;
+			qcom,ports-offset1 =			/bits/ 8 <0x01 0x02 0x0c 0x06 0x12 0x0d 0x07 0x0a 0xff>;
+			qcom,ports-offset2 =			/bits/ 8 <0xff 0x00 0x1f 0xff 0x00 0x1f 0x00 0x00 0xff>;
+
+			qcom,ports-hstart =             /bits/ 8 <0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff>;
+			qcom,ports-hstop =              /bits/ 8 <0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff>;
+			qcom,ports-word-length =        /bits/ 8 <0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff>;
+			
+			qcom,ports-block-pack-mode =    /bits/ 8 <0xff 0xff 0x01 0xff 0xff 0x01 0xff 0xff 0xff>;
+
+			qcom,ports-block-group-count =  /bits/ 8 <0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff>;
+			qcom,ports-lane-control =       /bits/ 8 <0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff 0xff>;
+
+			#sound-dai-cells = <1>;
+			#address-cells = <2>;
+			#size-cells = <0>;
+
+			status = "disabled";
+		};
+
 		vamacro: codec@62f20000 {
 				compatible = "qcom,sm8250-lpass-va-macro";
 				reg = <0x0 0x62f20000 0x0 0x1000>;
 
-				clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
-				clock-names = "mclk";
+				clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+						<&dummy_vamacro_clk>,
+						<&dummy_vamacro_clk>;
+				clock-names = "mclk",
+				      "macro",
+				      "dcodec";
 
 				qcom,dmic-sample-rate = <2400000>; // insisted by the controller
 				vdd-micb-supply = <&vreg_l15a_1p8>; // insisted by the controller
@@ -4752,6 +4842,8 @@
 				clock-output-names = "fsgen";
 
 				#sound-dai-cells = <1>;
+
+				status = "disabled";
 		};
 
 		rxmacro: codec@62ee0000 {
@@ -4760,7 +4852,6 @@
 
 			pinctrl-names = "default";
 			pinctrl-0 = <&rx_swr_active>;
-			status = "okay";
 
 			clocks = <&q6afecc LPASS_CLK_ID_TX_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
 				 <&q6afecc LPASS_CLK_ID_TX_CORE_NPL_MCLK  LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
@@ -4775,6 +4866,7 @@
 			#clock-cells = <0>;
 			clock-output-names = "mclk";
 			#sound-dai-cells = <1>;
+			status = "disabled";
 		};
 
 		swr3: soundwire@62ef0000 {
@@ -4826,7 +4918,7 @@
 				clock-output-names = "mclk";
 				#sound-dai-cells = <1>;
 
-				status = "okay";
+				status = "disabled";
 			};
 
 		swr2: soundwire@62ed0000 {
