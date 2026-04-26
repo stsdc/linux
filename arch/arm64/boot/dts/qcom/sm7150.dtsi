@@ -4771,7 +4771,7 @@
 		};
 
 		wsamacro: codec@62f00000 {
-			compatible = "qcom,sm8250-lpass-wsa-macro";
+			compatible = "qcom,sm8550-lpass-wsa-macro";
 			reg = <0 0x62f00000 0 0x1000>;
 			clocks = <&q6afecc LPASS_CLK_ID_WSA_CORE_MCLK LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
 				 <&q6afecc LPASS_CLK_ID_WSA_CORE_NPL_MCLK  LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
@@ -4869,7 +4869,7 @@
 			status = "disabled";
 		};
 
-		swr3: soundwire@62ef0000 {
+		swr_rx: soundwire@62ef0000 {
 			reg = <0 0x62ef0000 0 0x2000>;
 			compatible = "qcom,soundwire-v1.3.0";
 			status = "disabled";
@@ -4921,7 +4921,7 @@
 				status = "disabled";
 			};
 
-		swr2: soundwire@62ed0000 {
+		swr_tx: soundwire@62ed0000 {
 			reg = <0x0 0x62ed0000 0x0 0x2000>;
 				compatible = "qcom,soundwire-v1.3.0";
 				interrupts = <GIC_SPI 0x128 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 0x1f4 IRQ_TYPE_LEVEL_HIGH>;

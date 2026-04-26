@@ -91,6 +91,7 @@
 
 		mm1-dai-link {
 			link-name = "MultiMedia1";
+
 			cpu {
 				sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
 			};
@@ -111,20 +112,20 @@
 			};
 		};
 
-		va-dai-link {
-			link-name = "VA Capture";
-			cpu {
-				sound-dai = <&q6afedai VA_CODEC_DMA_TX_0>;
-			};
+		// va-dai-link {
+		// 	link-name = "VA Capture";
+		// 	cpu {
+		// 		sound-dai = <&q6afedai VA_CODEC_DMA_TX_0>;
+		// 	};
 
-			platform {
-				sound-dai = <&q6routing>;
-			};
+		// 	platform {
+		// 		sound-dai = <&q6routing>;
+		// 	};
 
-			codec {
-				sound-dai = <&vamacro 0>;
-			};
-		};
+		// 	codec {
+		// 		sound-dai = <&vamacro 0>;
+		// 	};
+		// };
 
 		wcd-playback-dai-link {
 			link-name = "WCD Playback";
@@ -218,23 +219,67 @@
 	};
 };
 
-&swr2 {
+&vamacro {
+	status = "okay";
+};
+
+&wsamacro {
+	status = "okay";
+};
+
+&swr0 {
+	status = "disabled";
+
+	left_spkr: speaker@0,3 {
+		compatible = "sdw10217201000";
+		reg = <0 3>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&spkr_1_sd_n_active>;
+		powerdown-gpios = <&tlmm 51 GPIO_ACTIVE_LOW>;
+		#thermal-sensor-cells = <0>;
+		sound-name-prefix = "SpkrLeft";
+		#sound-dai-cells = <0>;
+	};
+
+	right_spkr: speaker@0,4 {
+		compatible = "sdw10217201000";
+		reg = <0 4>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&spkr_2_sd_n_active>;
+		powerdown-gpios = <&tlmm 52 GPIO_ACTIVE_LOW>;
+		#thermal-sensor-cells = <0>;
+		sound-name-prefix = "SpkrRight";
+		#sound-dai-cells = <0>;
+	};
+};
+
+&rxmacro {
+	status = "okay";
+};
+
+&txmacro {
+	status = "okay";
+};
+
+&swr_tx {
 	status = "okay";
 
 	wcd_tx: wcd9375-tx@0,3 {
 		compatible = "sdw20217010a00";
 		reg = <0 3>;
-		qcom,tx-port-mapping = <1 2 3 4 5>;
+		qcom,tx-port-mapping = <2 3 4 5>;
+		qcom,tx-channel-mapping = /bits/ 8 <1 1 2 1 2 4 1 2 4 8>;
 	};
 };
 
-&swr3 {
+&swr_rx {
 	status = "okay";
 
 	wcd_rx: wcd9375-rx@0,4 {
 		compatible = "sdw20217010a00";
 		reg = <0 4>;
 		qcom,rx-port-mapping = <1 2 3 4 5>;
+		qcom,rx-channel-mapping = /bits/ 8 <1 2 1 1 2 1 1 2>;
 	};
 };
 
@@ -721,6 +766,69 @@
 			pins = "gpio43";
 			bias-disable;
 			drive-strength = <PMIC_GPIO_STRENGTH_MED>; /* 2 MA */
+		};
+	};
+
+	/* WSA speaker reset pins */
+	spkr_1_sd_n {
+		spkr_1_sd_n_sleep: spkr_1_sd_n_sleep {
+			mux {
+				pins = "gpio51";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio51";
+				drive-strength = <2>;   /* 2 mA */
+				bias-pull-down;
+				input-enable;
+			};
+		};
+
+		spkr_1_sd_n_active: spkr_1_sd_n_active {
+			mux {
+				pins = "gpio51";
+				function = "gpio";
+			};
+
+			config {
+				gpio-hog;
+				pins = "gpio51";
+				drive-strength = <16>;   /* 16 mA */
+				bias-disable;
+				output-high;
+			};
+		};
+	};
+
+	spkr_2_sd_n {
+		spkr_2_sd_n_sleep: spkr_2_sd_n_sleep {
+			mux {
+				pins = "gpio52";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio52";
+				drive-strength = <2>;   /* 2 mA */
+				bias-pull-down;
+				input-enable;
+			};
+		};
+
+		spkr_2_sd_n_active: spkr_2_sd_n_active {
+			mux {
+				pins = "gpio52";
+				function = "gpio";
+			};
+
+			config {
+				gpio-hog;
+				pins = "gpio52";
+				drive-strength = <16>;   /* 16 mA */
+				bias-disable;
+				output-high;
+			};
 		};
 	};
 };
