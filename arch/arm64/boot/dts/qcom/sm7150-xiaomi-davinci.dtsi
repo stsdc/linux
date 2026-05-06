@@ -133,7 +133,7 @@
 				sound-dai = <&q6afedai RX_CODEC_DMA_RX_0>;
 			};
 			codec {
-				sound-dai = <&wcd9375 0>, <&swr3 0>, <&rxmacro 0>;
+				sound-dai = <&wcd9375 0>, <&swr_rx 0>, <&rxmacro 0>;
 			};
 
 			platform {
