@@ -309,8 +309,22 @@
 	clock-frequency = <100000>;
 	status = "okay";
 
-	/* asahi-kasei,akm09970 (magnetometer) @ 0c */
+	magnetometer@c {
+		compatible = "asahi-kasei,ak09970";
+		reg = <0x0c>;
+		reset-gpios = <&tlmm 64 GPIO_ACTIVE_LOW>;
+		interrupts-extended = <&tlmm 120 IRQ_TYPE_LEVEL_LOW>;
+
+		vdd-supply = <&vreg_l8c_1p8>;
+
+		pinctrl-names = "active", "suspend";
+		pinctrl-0 = <&akm_irq_active &akm_reset_active>;
+		pinctrl-1 = <&akm_irq_suspend &akm_reset_suspend>;
+		status = "okay";
+	};
+
 	/* qcom,smb1390 (charger) @ 10 */
+
 };
 
 &ipa {
@@ -642,6 +656,63 @@
 			pins = "gpio43";
 			bias-disable;
 			drive-strength = <PMIC_GPIO_STRENGTH_MED>; /* 2 MA */
+		};
+	};
+
+	akm09970_irq {
+		akm_irq_active: akm_irq_active {
+			mux {
+				pins = "gpio93";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio93";
+				drive-strength = <PMIC_GPIO_STRENGTH_MED>;
+				bias-pull-up;
+			};
+		};
+
+		akm_irq_suspend: akm_irq_suspend {
+			mux {
+				pins = "gpio93";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio93";
+				drive-strength = <PMIC_GPIO_STRENGTH_MED>;
+				bias-disable;
+			};
+		};
+	};
+
+	akm09970_reset {
+		akm_reset_active: akm_reset_active {
+			mux {
+				pins = "gpio64";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio64";
+				drive-strength = <PMIC_GPIO_STRENGTH_MED>;
+				bias-pull-down;
+				output-low;
+			};
+		};
+
+		akm_reset_suspend: akm_reset_suspend {
+			mux {
+				pins = "gpio64";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio64";
+				drive-strength = <PMIC_GPIO_STRENGTH_MED>;
+				bias-disable;
+			};
 		};
 	};
 };

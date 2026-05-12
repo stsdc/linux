@@ -82,6 +82,7 @@
 #define AK09916_DEVICE_ID		0x09
 #define AK09912_DEVICE_ID		0x04
 #define AK09911_DEVICE_ID		0x05
+#define AK09970_DEVICE_ID		0xc0
 
 #define AK09911_REG_INFO1		0x02
 #define AK09911_REG_INFO2		0x03
@@ -126,6 +127,11 @@
 #define AK09912_REG_ASAZ		0x62
 
 #define AK09912_MAX_REGS		AK09912_REG_ASAZ
+
+/* 
+ * AK09970 Register definitions
+ */
+
 
 /*
  * Miscellaneous values.
@@ -203,6 +209,17 @@ static long ak09912_raw_to_gauss(u16 data)
 	return (((long)data + 128) * 1500) / 256;
 }
 
+/*
+ * The AK09970 has a range of +/- 36mT and a resolution of 1.1 uT/LSB.
+ * To go from the raw value to Gauss is: 1.1 uT = 0.011 Gauss.
+ * We return 11000 micro-Gauss so IIO formats it as 0.011000.
+ */
+static long ak09970_raw_to_gauss(u16 data)
+{
+	/* Formula accounts for Sensitivity Adjustment (ASA) from fuse ROM */
+	return (((long)data + 128) * 11000) / 256;
+}
+
 /* Compatible Asahi Kasei Compass parts */
 enum asahi_compass_chipset {
 	AK8975,
@@ -211,6 +228,7 @@ enum asahi_compass_chipset {
 	AK09912,
 	AK09916,
 	AK09918,
+	AK09970,
 };
 
 enum ak_ctrl_reg_addr {
@@ -401,7 +419,36 @@ static const struct ak_def ak_def_array[] = {
 			AK09912_REG_HXL,
 			AK09912_REG_HYL,
 			AK09912_REG_HZL},
-	}
+	},
+	[AK09970] = {
+		.type = AK09970,
+		.raw_to_gauss = ak09970_raw_to_gauss,
+		.range = 32768, /* 16-bit ADC range */
+		.ctrl_regs = {
+			AK09912_REG_ST1,
+			AK09912_REG_ST2,
+			AK09912_REG_CNTL2, /* Mode register */
+			AK09912_REG_ASAX,
+			AK09912_MAX_REGS
+		},
+		.ctrl_masks = {
+			AK09912_REG_ST1_DRDY_MASK,
+			AK09912_REG_ST2_HOFL_MASK,
+			0,
+			AK09912_REG_CNTL2_MODE_MASK
+		},
+		.ctrl_modes = {
+			AK09912_REG_CNTL_MODE_POWER_DOWN,
+			AK09912_REG_CNTL_MODE_ONCE,
+			AK09912_REG_CNTL_MODE_SELF_TEST,
+			AK09912_REG_CNTL_MODE_FUSE_ROM
+		},
+		.data_regs = {
+			AK09912_REG_HXL,
+			AK09912_REG_HYL,
+			AK09912_REG_HZL
+		},
+	},
 };
 
 /*
@@ -517,6 +564,10 @@ static int ak8975_who_i_am(struct i2c_client *client,
 		break;
 	case AK09918:
 		if (wia_val[1] == AK09918_DEVICE_ID)
+			return 0;
+		break;
+	case AK09970:
+		if (wia_val[1] == AK09970_DEVICE_ID)
 			return 0;
 		break;
 	}
@@ -1121,6 +1172,7 @@ static const struct of_device_id ak8975_of_match[] = {
 	{ .compatible = "ak09912", .data = &ak_def_array[AK09912] },
 	{ .compatible = "asahi-kasei,ak09916", .data = &ak_def_array[AK09916] },
 	{ .compatible = "asahi-kasei,ak09918", .data = &ak_def_array[AK09918] },
+	{.compatible = "asahi-kasei,ak09970", .data = &ak_def_array[AK09970] },
 	{ }
 };
 MODULE_DEVICE_TABLE(of, ak8975_of_match);
