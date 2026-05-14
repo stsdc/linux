@@ -37,6 +37,7 @@ properties:
     maxItems: 60
 
   gpio-line-names:
+    minItems: 1
     maxItems: 119
 
 patternProperties:

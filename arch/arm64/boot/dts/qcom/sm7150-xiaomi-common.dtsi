@@ -768,7 +768,7 @@
 		pins = "gpio9";
 		function = "gpio";
 		drive-strength = <16>;
-		input-enable;
+		// input-enable;
 		bias-disable;
 	};
 

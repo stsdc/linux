@@ -543,14 +543,14 @@
 		output-low;
 	};
 
-	mclk1_active: mclk1-active {
+	mclk1_active: mclk1-active-state {
 		pins = "gpio14";
 		function = "cam_mclk";
 		drive-strength = <2>;
 		bias-disable;
 	};
 
-	mclk3_active: mclk3-active {
+	mclk3_active: mclk3-active-state {
 		pins = "gpio16";
 		function = "cam_mclk";
 		drive-strength = <2>;
@@ -564,14 +564,14 @@
 		bias-pull-up;
 	};
 
-	ultra_active: ultra-active {
+	ultra_active: ultra-active-state {
 		pins = "gpio25";
 		function = "gpio";
 		drive-strength = <2>;
 		bias-pull-up;
 	};
 
-	ultra_ldo_active: ultra-ldo-active {
+	ultra_ldo_active: ultra-ldo-active-state {
 		pins = "gpio29";
 		function = "gpio";
 		drive-strength = <2>;
@@ -583,7 +583,7 @@
 		function = "gpio";
 		drive-strength = <2>;
 		bias-pull-up;
-		input-enable;
+		// input-enable;
 	};
 };
 

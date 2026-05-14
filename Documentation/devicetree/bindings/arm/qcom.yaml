@@ -991,6 +991,13 @@ properties:
 
       - items:
           - enum:
+              - xiaomi,davinci-samsung
+              - xiaomi,davinci-visionox
+          - const: xiaomi,davinci
+          - const: qcom,sm7150
+
+      - items:
+          - enum:
               - fairphone,fp4
           - const: qcom,sm7225
 
@@ -1235,6 +1242,7 @@ allOf:
               - qcom,sm6125
               - qcom,sm6350
               - qcom,sm7125
+              - qcom,sm7150
               - qcom,sm7225
               - qcom,sm8150
               - qcom,sm8250
